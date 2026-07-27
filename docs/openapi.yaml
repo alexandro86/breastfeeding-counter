@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: Breastfeeding Counter API
+  version: 0.1.0
+  description: API privada para registrar lactancia y productos relacionados.
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Desarrollo local
+tags:
+  - name: Health
+paths:
+  /health/live:
+    get:
+      operationId: getLiveness
+      tags: [Health]
+      summary: Confirma que el proceso de la API está vivo
+      responses:
+        "200":
+          description: El proceso responde
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Liveness"
+  /health/ready:
+    get:
+      operationId: getReadiness
+      tags: [Health]
+      summary: Confirma que la API puede usar PostgreSQL
+      responses:
+        "200":
+          description: La API está lista para recibir tráfico
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Readiness"
+        "503":
+          description: PostgreSQL no está disponible
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    Liveness:
+      type: object
+      additionalProperties: false
+      required: [status, service]
+      properties:
+        status:
+          type: string
+          const: ok
+        service:
+          type: string
+          const: breastfeeding-counter-api
+    Readiness:
+      type: object
+      additionalProperties: false
+      required: [status, database]
+      properties:
+        status:
+          type: string
+          const: ok
+        database:
+          type: string
+          const: ready
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail, request_id]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        request_id:
+          type: string

@@ -120,7 +120,8 @@ PostgreSQL administrado (Render)
 Cliente:
 
 - React, TypeScript y Vite.
-- React Router para rutas.
+- React Router para rutas cuando exista una versión sin vulnerabilidades conocidas; mientras la
+  auditoría no esté limpia, usar navegación nativa y fallback SPA sin añadir la dependencia.
 - TanStack Query para estado remoto, caché e invalidación.
 - React Hook Form y Zod para formularios y validación de interfaz.
 - Vitest, Testing Library y MSW para pruebas.

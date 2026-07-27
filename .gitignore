@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# JavaScript
+client/coverage/
+client/dist/
+client/node_modules/
+
+# Python
+server/.coverage
+server/.mypy_cache/
+server/.pytest_cache/
+.ruff_cache/
+server/.venv/
+server/__pycache__/
+server/htmlcov/
+server/**/*.py[cod]
+server/*.egg-info/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+# Local tooling
+.tmp-*/

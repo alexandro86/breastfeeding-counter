@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools==83.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "breastfeeding-counter-api"
+version = "0.1.0"
+description = "API de breastfeeding-counter"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "Flask>=3.1,<4",
+  "Flask-Cors>=6,<7",
+  "Flask-Migrate>=4,<5",
+  "Flask-SQLAlchemy>=3.1,<4",
+  "gunicorn>=23,<24",
+  "psycopg[binary]>=3.2,<4",
+  "python-dotenv>=1.1,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.16,<2",
+  "openapi-spec-validator>=0.7,<1",
+  "pip-audit>=2.9,<3",
+  "pytest>=9.0.3,<10",
+  "pytest-cov>=6.2,<8",
+  "ruff>=0.12,<1",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.13"
+check_untyped_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["flask_cors", "flask_migrate", "flask_sqlalchemy"]
+ignore_missing_imports = true
