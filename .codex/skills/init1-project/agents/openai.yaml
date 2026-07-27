@@ -1,0 +1,4 @@
+interface:
+  display_name: "Init1 Project"
+  short_description: "Base técnica de breastfeeding-counter"
+  default_prompt: "Usa $init1-project para crear o evolucionar breastfeeding-counter respetando su arquitectura y decisiones base."
