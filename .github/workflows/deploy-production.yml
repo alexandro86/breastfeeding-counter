@@ -21,9 +21,7 @@ jobs:
     name: Promote validated commit to production
     runs-on: ubuntu-latest
     timeout-minutes: 50
-    environment:
-      name: production
-      url: ${{ steps.vercel-deploy.outputs.url }}
+    environment: production
     env:
       DEPLOY_SHA: ${{ inputs.commit_sha }}
       API_BASE_URL: ${{ vars.API_BASE_URL }}
