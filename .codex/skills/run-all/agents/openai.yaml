@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run All"
+  short_description: "Inicia cliente, API y PostgreSQL local"
+  default_prompt: "Usa $run-all para levantar PostgreSQL, aplicar migraciones e iniciar el cliente y la API."
