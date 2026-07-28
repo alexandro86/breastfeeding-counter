@@ -13,6 +13,7 @@ def test_liveness_does_not_require_database(client: FlaskClient) -> None:
     assert response.get_json() == {
         "service": "breastfeeding-counter-api",
         "status": "ok",
+        "version": "development",
     }
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     assert response.headers["X-Request-ID"]
@@ -36,3 +37,13 @@ def test_readiness_reports_database_failure(client: FlaskClient, monkeypatch: An
     assert response.status_code == 503
     assert response.content_type == "application/problem+json"
     assert response.get_json()["type"].endswith("/database-unavailable")
+
+
+def test_liveness_exposes_configured_version(app: Any) -> None:
+    app.config["APP_VERSION"] = "a" * 40
+
+    with app.test_client() as client:
+        response = client.get("/api/v1/health/live")
+
+    assert response.status_code == 200
+    assert response.get_json()["version"] == "a" * 40

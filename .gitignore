@@ -14,10 +14,10 @@ server/.mypy_cache/
 server/.pytest_cache/
 .ruff_cache/
 server/.venv/
-server/__pycache__/
 server/htmlcov/
-server/**/*.py[cod]
 server/*.egg-info/
+**/__pycache__/
+**/*.py[cod]
 
 # Editors and operating systems
 .DS_Store

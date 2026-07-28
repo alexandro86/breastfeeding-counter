@@ -29,6 +29,7 @@ class BaseConfig:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "development-only-jwt-secret")
     FRONTEND_ORIGINS = _origins()
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+    APP_VERSION = os.getenv("RENDER_GIT_COMMIT", os.getenv("APP_VERSION", "development"))
     JSON_SORT_KEYS = False
 
     @classmethod

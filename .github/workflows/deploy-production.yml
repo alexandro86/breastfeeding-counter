@@ -1,0 +1,146 @@
+name: Deploy production
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Full SHA already deployed successfully to staging
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  deploy:
+    name: Promote validated commit to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    environment:
+      name: production
+      url: ${{ steps.vercel-deploy.outputs.url }}
+    env:
+      DEPLOY_SHA: ${{ inputs.commit_sha }}
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+      GH_TOKEN: ${{ github.token }}
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Validate immutable SHA and configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$DEPLOY_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$API_BASE_URL" =~ ^https://[^[:space:]]+/api/v1/?$ ]]
+          [[ "$FRONTEND_URL" =~ ^https://[^[:space:]]+/?$ ]]
+          [[ "$RENDER_SERVICE_ID" =~ ^srv-[A-Za-z0-9]+$ ]]
+          test -n "$RENDER_API_KEY"
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+          test -n "$VERCEL_TOKEN"
+
+      - name: Checkout requested commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          ref: ${{ env.DEPLOY_SHA }}
+          persist-credentials: false
+
+      - name: Verify commit belongs to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$DEPLOY_SHA"
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$DEPLOY_SHA" origin/main
+
+      - name: Verify successful staging deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          successful_runs="$(
+            gh api --method GET \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/deploy-staging.yml/runs" \
+              -f "status=success" \
+              -f "per_page=100" \
+              --paginate \
+              --slurp \
+              --jq '[.[].workflow_runs[] | select(
+                .event == "workflow_run" and
+                .conclusion == "success" and
+                .head_branch == "main" and
+                .display_title == "Deploy staging '"$DEPLOY_SHA"'"
+              )] | length'
+          )"
+          test "$successful_runs" -ge 1
+
+      - name: Deploy API and wait for Render
+        run: >-
+          python scripts/deploy/render_deploy.py
+          --service-id "$RENDER_SERVICE_ID"
+          --commit-sha "$DEPLOY_SHA"
+          --timeout-seconds 1800
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install pinned Vercel CLI
+        run: npm install --global vercel@58.0.0
+
+      - name: Pull Vercel production configuration
+        working-directory: client
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build frontend for production
+        working-directory: client
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy staged production candidate
+        id: vercel-deploy
+        working-directory: client
+        shell: bash
+        run: |
+          set -euo pipefail
+          deployment_url="$(
+            vercel deploy --prebuilt --prod --skip-domain --token="$VERCEL_TOKEN" \
+              --meta "gitCommitSha=$DEPLOY_SHA"
+          )"
+          [[ "$deployment_url" =~ ^https://[A-Za-z0-9.-]+/?$ ]]
+          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test production candidate
+        run: >-
+          python scripts/deploy/smoke_test.py
+          --api-base-url "$API_BASE_URL"
+          --frontend-url "${{ steps.vercel-deploy.outputs.url }}"
+          --expected-commit "$DEPLOY_SHA"
+          --attempts 12
+          --interval-seconds 15
+
+      - name: Promote candidate to production domains
+        working-directory: client
+        run: >-
+          vercel promote
+          "${{ steps.vercel-deploy.outputs.url }}"
+          --yes
+          --token="$VERCEL_TOKEN"
+
+      - name: Smoke test stable production URLs
+        run: >-
+          python scripts/deploy/smoke_test.py
+          --api-base-url "$API_BASE_URL"
+          --frontend-url "$FRONTEND_URL"
+          --expected-commit "$DEPLOY_SHA"
+          --attempts 12
+          --interval-seconds 15

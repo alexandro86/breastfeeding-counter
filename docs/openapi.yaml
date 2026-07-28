@@ -44,7 +44,7 @@ components:
     Liveness:
       type: object
       additionalProperties: false
-      required: [status, service]
+      required: [status, service, version]
       properties:
         status:
           type: string
@@ -52,6 +52,10 @@ components:
         service:
           type: string
           const: breastfeeding-counter-api
+        version:
+          type: string
+          minLength: 1
+          description: Identificador de versión; en Render corresponde al SHA desplegado
     Readiness:
       type: object
       additionalProperties: false

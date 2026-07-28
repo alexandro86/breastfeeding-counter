@@ -144,10 +144,11 @@ GitHub Actions es la puerta de entrega.
 ### Staging
 
 - Activar después de CI exitoso en `main`.
-- Desplegar primero la API de staging usando un Deploy Hook secreto de Render.
+- Desplegar primero la API de staging mediante la API de Render, indicando el SHA exacto y con
+  los autodeploys del servicio desactivados.
 - Ejecutar migraciones con un Render pre-deploy command o job de una sola ejecución.
 - Esperar health check.
-- Desplegar/promover cliente de staging con Vercel CLI o integración protegida.
+- Desplegar el cliente de staging desde el checkout del mismo SHA mediante Vercel CLI.
 - Ejecutar smoke tests contra URLs de staging.
 
 ### Producción
@@ -161,7 +162,7 @@ GitHub Actions es la puerta de entrega.
 
 Secretos esperados en GitHub Environments:
 
-- `RENDER_DEPLOY_HOOK_URL` o credenciales acotadas de Render.
+- `RENDER_API_KEY` con permisos acotados y el identificador no secreto `RENDER_SERVICE_ID`.
 - `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` si se usa CLI.
 - URLs públicas de smoke tests sin secretos.
 

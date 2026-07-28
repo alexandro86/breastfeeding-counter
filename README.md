@@ -119,6 +119,7 @@ No ejecutar `db.create_all()` fuera de las pruebas.
 - [ADR-001: monorepo y hosting](docs/adr/001-monorepo-and-hosting.md)
 - [ADR-002: autenticación de la SPA](docs/adr/002-spa-authentication.md)
 - [Contrato OpenAPI](docs/openapi.yaml)
+- [Operación de staging y producción](docs/operations/deployment.md)
 - [Skill base](.codex/skills/init1-project/SKILL.md)
 
 Las métricas del producto son descriptivas y no constituyen consejo médico.

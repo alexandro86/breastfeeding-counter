@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, current_app, jsonify
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -14,7 +14,14 @@ health = Blueprint("health", __name__, url_prefix="/health")
 
 @health.get("/live")
 def liveness() -> tuple[Any, int]:
-    return jsonify(status="ok", service="breastfeeding-counter-api"), 200
+    return (
+        jsonify(
+            status="ok",
+            service="breastfeeding-counter-api",
+            version=current_app.config["APP_VERSION"],
+        ),
+        200,
+    )
 
 
 @health.get("/ready")
