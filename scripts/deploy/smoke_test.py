@@ -22,9 +22,28 @@ class SmokeTestError(RuntimeError):
 
 def _validate_https_url(value: str, name: str) -> str:
     parsed = urlparse(value)
-    if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+    ):
         raise SmokeTestError(f"{name} debe ser una URL HTTPS pública sin credenciales.")
     return value.rstrip("/") + "/"
+
+
+def _normalize_api_base_url(value: str) -> str:
+    api = _validate_https_url(value, "API_BASE_URL")
+    path = urlparse(api).path.rstrip("/")
+    if not path:
+        return urljoin(api, "api/v1/")
+    if path != "/api/v1":
+        raise SmokeTestError(
+            "API_BASE_URL debe ser un origen HTTPS o terminar en /api/v1."
+        )
+    return api
 
 
 def _get(url: str, accept: str) -> tuple[bytes, str]:
@@ -56,7 +75,7 @@ def _get_json(url: str) -> dict[str, Any]:
 
 
 def run(api_base_url: str, frontend_url: str, expected_commit: str) -> None:
-    api = _validate_https_url(api_base_url, "API_BASE_URL")
+    api = _normalize_api_base_url(api_base_url)
     frontend = _validate_https_url(frontend_url, "FRONTEND_URL")
 
     live = _get_json(urljoin(api, "health/live"))
