@@ -114,7 +114,7 @@ en archivos del repositorio.
 | Plataforma         | Alcance     | Nombre                       | Tipo     | Propósito                                      |
 | ------------------ | ----------- | ---------------------------- | -------- | ---------------------------------------------- |
 | GitHub             | repositorio | `STAGING_DEPLOYMENT_ENABLED` | variable | Habilita staging automático cuando vale `true` |
-| GitHub Environment | ambos       | `API_BASE_URL`               | variable | URL pública HTTPS terminada en `/api/v1`       |
+| GitHub Environment | ambos       | `API_BASE_URL`               | variable | Origen HTTPS de API; `/api/v1` es opcional         |
 | GitHub Environment | ambos       | `FRONTEND_URL`               | variable | URL pública estable del frontend               |
 | GitHub Environment | staging     | `VERCEL_STAGING_ALIAS`       | variable | Dominio sin `https://` asignado al preview     |
 | GitHub Environment | ambos       | `RENDER_SERVICE_ID`          | variable | Servicio Render objetivo (`srv-...`)           |

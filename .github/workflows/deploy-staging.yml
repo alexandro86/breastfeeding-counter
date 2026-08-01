@@ -42,8 +42,8 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$DEPLOY_SHA" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$API_BASE_URL" =~ ^https://[^[:space:]]+/api/v1/?$ ]]
-          [[ "$FRONTEND_URL" =~ ^https://[^[:space:]]+/?$ ]]
+          [[ "$API_BASE_URL" =~ ^https://[^/[:space:]]+(/api/v1)?/?$ ]]
+          [[ "$FRONTEND_URL" =~ ^https://[^/[:space:]]+/?$ ]]
           [[ "$RENDER_SERVICE_ID" =~ ^srv-[A-Za-z0-9]+$ ]]
           [[ "$VERCEL_STAGING_ALIAS" =~ ^[A-Za-z0-9.-]+$ ]]
           test -n "$RENDER_API_KEY"

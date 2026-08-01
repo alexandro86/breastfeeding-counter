@@ -30,6 +30,45 @@ class SmokeTestTests(unittest.TestCase):
             "a" * 40,
         )
 
+        self.assertEqual(
+            [call.args[0] for call in get_json.call_args_list],
+            [
+                "https://api.example.com/api/v1/health/live",
+                "https://api.example.com/api/v1/health/ready",
+            ],
+        )
+
+    @patch("scripts.deploy.smoke_test._get")
+    @patch("scripts.deploy.smoke_test._get_json")
+    def test_run_accepts_api_origin(
+        self,
+        get_json: unittest.mock.Mock,
+        get: unittest.mock.Mock,
+    ) -> None:
+        get_json.side_effect = [
+            {
+                "status": "ok",
+                "service": "breastfeeding-counter-api",
+                "version": "a" * 40,
+            },
+            {"status": "ok", "database": "ready"},
+        ]
+        get.return_value = (b"<!doctype html><html></html>", "text/html")
+
+        smoke_test.run(
+            "https://api.example.com/",
+            "https://app.example.com/",
+            "a" * 40,
+        )
+
+        self.assertEqual(
+            [call.args[0] for call in get_json.call_args_list],
+            [
+                "https://api.example.com/api/v1/health/live",
+                "https://api.example.com/api/v1/health/ready",
+            ],
+        )
+
     @patch("scripts.deploy.smoke_test._get_json")
     def test_run_rejects_unexpected_commit(self, get_json: unittest.mock.Mock) -> None:
         get_json.return_value = {
@@ -49,6 +88,14 @@ class SmokeTestTests(unittest.TestCase):
         with self.assertRaisesRegex(smoke_test.SmokeTestError, "HTTPS"):
             smoke_test.run(
                 "http://api.example.com/api/v1",
+                "https://app.example.com",
+                "a" * 40,
+            )
+
+    def test_run_rejects_unexpected_api_path(self) -> None:
+        with self.assertRaisesRegex(smoke_test.SmokeTestError, "terminar en /api/v1"):
+            smoke_test.run(
+                "https://api.example.com/other",
                 "https://app.example.com",
                 "a" * 40,
             )
