@@ -87,7 +87,7 @@ Trabajos:
 4. `security`
    - Ejecutar análisis de dependencias y análisis estático apropiado.
 5. `e2e`
-   - Ejecutar Playwright para login, iniciar/finalizar toma y registrar producto.
+   - Ejecutar Cypress para login, iniciar/finalizar toma y registrar producto.
    - Puede quedar para `main` al inicio si el costo de PR es excesivo.
 
 Fijar acciones de terceros a SHA de commit. Configurar Dependabot para npm, pip y GitHub Actions.

@@ -125,7 +125,7 @@ Cliente:
 - TanStack Query para estado remoto, caché e invalidación.
 - React Hook Form y Zod para formularios y validación de interfaz.
 - Vitest, Testing Library y MSW para pruebas.
-- Playwright para el flujo crítico extremo a extremo.
+- Cypress para el flujo crítico extremo a extremo.
 - ESLint y Prettier.
 
 Servidor:
@@ -133,8 +133,8 @@ Servidor:
 - Python 3.12 o versión estable compatible con el proveedor.
 - Flask con factory pattern y blueprints.
 - SQLAlchemy 2 y Flask-Migrate/Alembic.
-- Marshmallow o Pydantic para serialización/validación; elegir uno y usarlo consistentemente.
-- Flask-JWT-Extended si se adopta JWT.
+- Pydantic 2 para serialización y validación.
+- Flask-JWT-Extended para access tokens JWT y protección de rutas autenticadas.
 - Psycopg 3 como driver PostgreSQL.
 - pytest, pytest-cov, Ruff y mypy.
 - Gunicorn en producción.
