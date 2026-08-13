@@ -19,15 +19,18 @@ demuestre que deben revisarse.
    entornos, Docker, GitHub Actions, hosting, secretos, seguridad u observabilidad.
 4. Leer [implementation-roadmap.md](references/implementation-roadmap.md) para iniciar el
    repositorio, seleccionar el siguiente hito o evaluar si una entrega está terminada.
-5. Leer `client/technical-definition.md` antes de modificar el cliente y
+5. Leer `tasks.md` antes de seleccionar o implementar trabajo del MVP. Usar sus IDs estables,
+   dependencias, criterios de aceptación y trazabilidad; verificar el estado real antes de mover
+   un ticket a `Ready` o `Done`.
+6. Leer `client/technical-definition.md` antes de modificar el cliente y
    `server/technical_definition.md` antes de modificar el servidor.
-6. Inspeccionar el estado real del repositorio antes de modificarlo. No sobrescribir decisiones
+7. Inspeccionar el estado real del repositorio antes de modificarlo. No sobrescribir decisiones
    ya implementadas sin identificar la diferencia y su impacto.
-7. Implementar incrementos verticales pequeños: migración/modelo, servicio, endpoint, interfaz
+8. Implementar incrementos verticales pequeños: migración/modelo, servicio, endpoint, interfaz
    y pruebas del mismo caso de uso.
-8. Ejecutar las verificaciones aplicables de cliente y servidor. Informar qué se verificó y qué
+9. Ejecutar las verificaciones aplicables de cliente y servidor. Informar qué se verificó y qué
    quedó pendiente.
-9. Actualizar estas referencias cuando una decisión arquitectónica aceptada cambie.
+10. Actualizar estas referencias cuando una decisión arquitectónica aceptada cambie.
 
 ## Reglas no negociables
 
