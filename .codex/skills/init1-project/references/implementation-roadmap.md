@@ -36,7 +36,7 @@ Criterio: clon limpio puede instalar, levantar, probar y construir ambas aplicac
 
 ### Hito 1 — Identidad y perfiles
 
-- Registro, login, refresh, logout y sesión.
+- Acceso con Google, creación de cuenta interna, refresh, logout y sesión.
 - Perfil y zona horaria.
 - CRUD/archivo de bebés.
 - Pruebas de aislamiento entre usuarios.
@@ -62,7 +62,6 @@ Criterio: no existen referencias cruzadas entre cuentas y el historial sobrevive
 
 ### Hito 4 — Preparación para beta
 
-- Recuperación de contraseña.
 - Exportación y eliminación de cuenta.
 - Accesibilidad, seguridad, rate limits y cabeceras.
 - Observabilidad con redacción.
@@ -86,7 +85,7 @@ No comenzar estas mejoras antes de validar el MVP.
 1. Crear esqueleto y comandos reproducibles.
 2. Añadir health checks y conexión PostgreSQL.
 3. Crear modelo/migración de usuario y bebé.
-4. Implementar registro/login y autorización.
+4. Implementar acceso con Google y autorización.
 5. Crear pantalla de sesión y selector de bebé.
 6. Añadir pruebas de integración y primer E2E.
 7. Desplegar staging.

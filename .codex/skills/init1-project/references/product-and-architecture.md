@@ -30,10 +30,9 @@ calificar una rutina como correcta o incorrecta.
 
 ### Cuenta
 
-- Registrarse con correo y contraseña.
+- Registrarse o acceder con una cuenta de Google.
 - Iniciar y cerrar sesión.
 - Renovar sesión de manera segura.
-- Solicitar y completar recuperación de contraseña.
 - Configurar nombre visible, zona horaria y preferencias básicas.
 - Exportar o eliminar la cuenta y sus datos.
 

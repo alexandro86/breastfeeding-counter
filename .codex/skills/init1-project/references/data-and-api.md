@@ -29,7 +29,6 @@
 |---|---|---|
 | id | uuid | PK |
 | email | citext/varchar | único, normalizado, requerido |
-| password_hash | text | requerido |
 | display_name | varchar(120) | requerido |
 | timezone | varchar(64) | IANA, por defecto `UTC` |
 | is_active | boolean | por defecto true |
@@ -37,6 +36,23 @@
 | updated_at | timestamptz | requerido |
 
 Usar extensión `citext` si el proveedor la permite; si no, índice único sobre `lower(email)`.
+El correo es un atributo de contacto verificado, no la clave canónica de identidad.
+
+### external_identities
+
+| Campo | Tipo | Regla |
+|---|---|---|
+| id | uuid | PK |
+| user_id | uuid | FK users, requerido |
+| provider | varchar(32) | `google` en el MVP |
+| issuer | varchar(255) | emisor OpenID Connect, requerido |
+| subject | varchar(255) | sujeto estable del proveedor, requerido |
+| email_at_link | varchar | correo verificado al vincular, informativo |
+| created_at | timestamptz | requerido |
+| updated_at | timestamptz | requerido |
+
+Crear unicidad sobre `(issuer, subject)` y sobre `(user_id, provider)`. No vincular ni fusionar
+cuentas automáticamente usando únicamente el correo.
 
 ### babies
 
@@ -105,11 +121,11 @@ No persistir `duration_seconds`: derivarla de `ended_at - started_at` para evita
 
 Índice `(user_id, used_at DESC)`. Verificar que producto, toma y uso pertenezcan al mismo usuario.
 
-### Sesiones y recuperación
+### Sesiones
 
 Guardar para las sesiones de autenticación una representación hasheada del refresh token,
-usuario, expiración y revocación. Para recuperar contraseña, guardar solo hash, usuario,
-expiración y fecha de uso. Usar tokens de un solo uso y corta duración.
+usuario, familia, expiración, rotación y revocación. El MVP no almacena contraseñas locales ni
+tokens de recuperación de contraseña.
 
 ## 3. Contrato HTTP
 
@@ -138,18 +154,17 @@ Formato de timestamps: ISO 8601 con offset, normalizado a `Z` al responder.
 
 ### Autenticación
 
-- `POST /auth/register`
-- `POST /auth/login`
+- `POST /auth/google` para validar la identidad Google y crear o recuperar la cuenta interna
 - `POST /auth/refresh`
 - `POST /auth/logout`
-- `POST /auth/password-reset/request`
-- `POST /auth/password-reset/confirm`
 - `GET /me`
 - `PATCH /me`
 - `DELETE /me`
 - `GET /me/export`
 
-Evitar revelar si un correo existe al solicitar recuperación.
+Google OpenID Connect es el único proveedor del MVP. Validar la prueba de identidad en el servidor
+y vincular por `(issuer, subject)`, no solo por correo. Solicitar únicamente `openid`, `email` y
+`profile`.
 
 ### Bebés
 
