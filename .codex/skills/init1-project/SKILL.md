@@ -11,8 +11,8 @@ demuestre que deben revisarse.
 
 ## Flujo de trabajo
 
-1. Leer [product-and-architecture.md](references/product-and-architecture.md) para cualquier
-   tarea de producto, estructura del monorepo o frontend/backend.
+1. Leer `prd.md` y [product-and-architecture.md](references/product-and-architecture.md) para
+   cualquier tarea de producto, estructura del monorepo o frontend/backend.
 2. Leer [data-and-api.md](references/data-and-api.md) antes de crear migraciones, modelos,
    endpoints, validaciones o clientes HTTP.
 3. Leer [delivery-and-operations.md](references/delivery-and-operations.md) antes de configurar
@@ -20,7 +20,7 @@ demuestre que deben revisarse.
 4. Leer [implementation-roadmap.md](references/implementation-roadmap.md) para iniciar el
    repositorio, seleccionar el siguiente hito o evaluar si una entrega está terminada.
 5. Leer `client/technical-definition.md` antes de modificar el cliente y
-   `server/technical_difinition.md` antes de modificar el servidor.
+   `server/technical_definition.md` antes de modificar el servidor.
 6. Inspeccionar el estado real del repositorio antes de modificarlo. No sobrescribir decisiones
    ya implementadas sin identificar la diferencia y su impacto.
 7. Implementar incrementos verticales pequeños: migración/modelo, servicio, endpoint, interfaz

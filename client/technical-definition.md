@@ -374,7 +374,7 @@ than sleep for a fixed duration.
 
 Use Cypress for a small set of high-value cross-system journeys:
 
-1. register or authenticate and restore a session;
+1. authenticate through a controlled Google Identity boundary and restore a session;
 2. create/select a baby profile;
 3. start, reload, recover, and finish a feeding;
 4. create a manual feeding and verify history;

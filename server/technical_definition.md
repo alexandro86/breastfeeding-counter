@@ -113,7 +113,7 @@ server/
 |   |       |-- feedings.py
 |   |       |-- products.py
 |   |       `-- health.py
-|   |-- auth/               # JWT callbacks, password hashing, session primitives
+|   |-- auth/               # Google identity, JWT callbacks, session primitives
 |   |-- models/             # SQLAlchemy persistence models only
 |   |-- repositories/       # Queries and persistence operations
 |   |-- schemas/            # Pydantic request, response, and query models
@@ -205,7 +205,7 @@ Routes MUST NOT:
 - call `db.session.commit()`;
 - build complex SQLAlchemy statements;
 - expose ORM objects directly;
-- hash passwords or create/revoke sessions directly;
+- validate Google identity or create/revoke sessions directly;
 - catch broad exceptions merely to return a generic response;
 - return HTML from `/api/v1`.
 
@@ -254,7 +254,7 @@ multi-aggregate workflows.
 
 Schemas describe transport data. Pydantic models MUST NOT be used as SQLAlchemy models, and ORM
 models MUST NOT be returned as API schemas. Explicit mapping prevents accidental exposure of
-password hashes, token hashes, internal keys, or data belonging to another user.
+identity-provider data, token hashes, internal keys, or data belonging to another user.
 
 ## 7. Pydantic validation and serialization
 
@@ -455,18 +455,21 @@ path. Store only a keyed hash/digest plus session metadata:
 - safe technical metadata only when justified.
 
 Rotate the token atomically on every refresh. Reuse of a replaced token MUST revoke the affected
-family. Logout revokes the current session and clears the cookie. Password change, account
-deactivation, or suspected compromise MUST support revoking all user sessions.
+family. Logout revokes the current session and clears the cookie. Account deactivation, identity
+unlinking, or suspected compromise MUST support revoking all user sessions.
 
 Refresh and logout require explicit CSRF protection because the browser sends the cookie
 automatically. CORS MUST allow credentials only for exact configured client origins. Never log raw
-JWTs, refresh tokens, CSRF values, passwords, or authorization headers.
+JWTs, Google credentials, refresh tokens, CSRF values, or authorization headers.
 
-### 12.3 Passwords and authorization
+### 12.3 Google identity and authorization
 
-- Hash passwords with Argon2id using reviewed current parameters.
-- Apply rate limits to registration, login, refresh, logout, and password recovery.
-- Use generic login and recovery responses to avoid account enumeration.
+- Follow ADR-003 and validate Google OpenID Connect evidence only on the server.
+- Request only `openid`, `email`, and `profile` scopes.
+- Link internal accounts by verified `(issuer, subject)`, never by email alone.
+- Do not store Google credentials or implement local passwords in the MVP.
+- Apply rate limits to Google sign-in, refresh, and logout.
+- Use generic authentication failures that avoid unnecessary account disclosure.
 - Require ownership in every repository query for user data.
 - Prefer `404` over revealing the existence of another user's resource.
 - Never rely on UUID unpredictability as authorization.
@@ -526,7 +529,7 @@ Error responses MUST:
 - use stable machine-readable `type` values;
 - localize user-facing text later without changing error identity;
 - include field errors only for safe validation details;
-- never include passwords, tokens, notes, emails, or raw submitted objects.
+- never include Google credentials, tokens, notes, emails, or raw submitted objects.
 
 ## 14. Type hints and static analysis
 
@@ -583,7 +586,7 @@ Every request receives or generates a validated request ID and returns it as `X-
 Structured production logs SHOULD include timestamp, severity, environment, app version, request
 ID, method, route template, status, and duration.
 
-Logs MUST NOT include tokens, cookies, passwords, authorization headers, email addresses, baby
+Logs MUST NOT include tokens, cookies, Google credentials, authorization headers, email addresses, baby
 names, feeding notes, product notes, or full payloads. Prefer stable event names and internal
 non-sensitive identifiers only when necessary.
 

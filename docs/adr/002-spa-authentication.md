@@ -20,8 +20,8 @@ Usar un esquema híbrido:
 - Limitar CORS a orígenes explícitos y habilitar credenciales solo para ellos.
 - Detectar reutilización de refresh tokens y revocar la familia afectada.
 
-Las contraseñas se protegerán con Argon2id. Los endpoints de autenticación tendrán rate limiting
-y respuestas que no revelen la existencia de una cuenta.
+La verificación inicial de identidad se define en ADR-003. Los endpoints de autenticación tendrán
+rate limiting y respuestas que no revelen información innecesaria sobre una cuenta.
 
 ## Consecuencias
 

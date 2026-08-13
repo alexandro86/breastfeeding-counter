@@ -191,7 +191,8 @@ destructiva automáticamente. Tomar backup antes de cambios de alto riesgo y ens
 
 ## 7. Seguridad
 
-- Hash de contraseñas con Argon2id o bcrypt y parámetros actuales.
+- Validar la identidad Google exclusivamente en el servidor y vincularla por emisor y sujeto
+  estables; no almacenar contraseñas ni credenciales del proveedor.
 - Rate limiting en login, registro, refresh y recuperación.
 - Rotación y detección de reutilización de refresh tokens.
 - TLS obligatorio y cookies `Secure` en producción.
